@@ -3,7 +3,7 @@ use super::{IDENTIFIER_RX, DOUBLE_LITERAL_RX, OPEN_BRACKETS_RX, CLOSED_BRACKETS_
             CLOSED_CURLY_BRACES_RX, ASSIGNMENT_OPERATOR_RX, EQUALITY_OPERATOR_RX,
             ADDITION_OPERATOR_RX, SUBTRACTION_OPERATOR_RX, MULTIPLICATION_OPERATOR_RX,
             DIVISION_OPERATOR_RX, BINARY_OR_OPERATOR_RX, BINARY_AND_OPERATOR_RX,
-            KEYWORD_LET_RX, KEYWORD_FN_RX, tokenize_str, Token};
+            KEYWORD_LET_RX, KEYWORD_FN_RX, COMMA_SEPARATOR_RX, tokenize_str, Token};
 
 #[test]
 fn identifier_regex_valid() {
@@ -95,6 +95,7 @@ fn operator_regex_invalid() {
 fn keyword_regex_valid() {
     assert!(KEYWORD_LET_RX.is_match("let"));
     assert!(KEYWORD_FN_RX.is_match("fn"));
+    assert!(COMMA_SEPARATOR_RX.is_match(","));
 }
 
 #[test]
@@ -103,6 +104,7 @@ fn keyword_regex_invalid() {
     assert!(!KEYWORD_FN_RX.is_match("fdsnsdasd"));
     assert!(!KEYWORD_LET_RX.is_match("fn"));
     assert!(!KEYWORD_FN_RX.is_match("let"));
+    assert!(!COMMA_SEPARATOR_RX.is_match("&&"));
 }
 
 #[test]
@@ -116,6 +118,20 @@ fn tokenizer_valid() {
          Token::ClosedParenthesis,
          Token::OpenCurlyBraces,
          Token::ClosedCurlyBraces]);
+
+     assert_eq!(tokenize_str("let a = fn foo(bar, bob) {}").expect("Tokenization failed"),
+     vec![Token::KeywordLet,
+          Token::Identifier("a".to_string()),
+          Token::AssignmentOperator,
+          Token::KeywordFn,
+          Token::Identifier("foo".to_string()),
+          Token::OpenParenthesis,
+          Token::Identifier("bar".to_string()),
+          Token::CommaSeparator,
+          Token::Identifier("bob".to_string()),
+          Token::ClosedParenthesis,
+          Token::OpenCurlyBraces,
+          Token::ClosedCurlyBraces]);
 
      assert_eq!(tokenize_str("   let a = fn \n\n\n \t\t\t\t () { b = 8.3 }  ").expect("Tokenization failed"),
      vec![Token::KeywordLet,

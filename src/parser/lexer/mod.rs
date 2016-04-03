@@ -19,13 +19,14 @@ pub enum Token {
     MultiplicationOperator,
     DivisionOperator,
     BinaryOrOperator,
-    BinaryAndOperator
+    BinaryAndOperator,
+    CommaSeparator
 }
 
 lazy_static!{
     static ref KEYWORD_LET_RX: Regex = Regex::new(r"^let").unwrap();
     static ref KEYWORD_FN_RX: Regex = Regex::new(r"^fn").unwrap();
-    static ref IDENTIFIER_RX: Regex = Regex::new(r"^[:alpha:][:alphanum:]*").unwrap();
+    static ref IDENTIFIER_RX: Regex = Regex::new(r"^[a-zA-Z][a-zA-Z0-9_]*").unwrap();
     static ref DOUBLE_LITERAL_RX: Regex =
         Regex::new(r"^(([1-9][0-9]*\.?[0-9]*)|(\.[0-9]+))([Ee][+-]?[0-9]+)?").unwrap();
     static ref OPEN_PARENTHESIS_RX: Regex = Regex::new(r"^\(").unwrap();
@@ -42,6 +43,7 @@ lazy_static!{
     static ref SUBTRACTION_OPERATOR_RX: Regex = Regex::new(r"^-").unwrap();
     static ref MULTIPLICATION_OPERATOR_RX: Regex = Regex::new(r"^\*").unwrap();
     static ref DIVISION_OPERATOR_RX: Regex = Regex::new(r"^/").unwrap();
+    static ref COMMA_SEPARATOR_RX: Regex = Regex::new(r"^,").unwrap();
 }
 
 macro_rules! tokenize {
@@ -85,7 +87,8 @@ fn tokenize_str(mut input: &str) -> Result<Vec<Token>, String> {
             ADDITION_OPERATOR_RX | |_| Token::AdditionOperator,
             SUBTRACTION_OPERATOR_RX | |_| Token::SubtractionOperator,
             MULTIPLICATION_OPERATOR_RX | |_| Token::MultiplicationOperator,
-            DIVISION_OPERATOR_RX | |_| Token::DivisionOperator
+            DIVISION_OPERATOR_RX | |_| Token::DivisionOperator,
+            COMMA_SEPARATOR_RX | |_| Token::CommaSeparator
             );
     Ok(token_container)
 }
