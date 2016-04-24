@@ -1,5 +1,8 @@
 use regex::Regex;
 
+pub type SourcePosition = usize;
+pub struct SourcePositionRowColumn(usize, usize);
+
 #[derive(Debug, PartialEq)]
 pub enum Token {
     KeywordLet,
@@ -55,29 +58,40 @@ lazy_static!{
 }
 
 macro_rules! tokenize {
-    ( $string:expr ,$container:expr, $( $regex:ident | $token_creator:expr ), *) => {
-        $string = $string.trim();
+    ( $string:expr ,$container:expr, $pos_counter:expr,
+        $( $regex:ident | $token_creator:expr ), *) => {{
+
         while $string.len() > 0
         {
+            let trimmed_string = $string.trim_left();
+            if trimmed_string.len() == 0 {
+                break;
+            }
+
+            $pos_counter += $string.len() - trimmed_string.len();
+            $string = trimmed_string;
             $(
                 match $regex.find($string) {
                     Some((0, n)) => {
-                        $container.push($token_creator((&$string[0..n])));
-                        $string = &$string[n..].trim();
+                        $container.push(($pos_counter, $token_creator((&$string[0..n]))));
+                        $pos_counter += n;
+                        $string = &$string[n..];
                         continue;
                     },
                     _ => {}
                 }
             )*
-            return Err("Cannot tokenize".to_string());
+            return Err(($pos_counter, "Cannot tokenize".to_string()));
         }
-    };
+    }};
 }
 
-fn tokenize_str(mut input: &str) -> Result<Vec<Token>, String> {
-    let mut token_container: Vec<Token> = Vec::new();
+pub fn tokenize_str(mut input: & str) -> Result<Vec<(SourcePosition, Token)>,
+    (SourcePosition, String)> {
+    let mut token_container: Vec<(usize, Token)> = Vec::new();
+    let mut pos_counter: usize = 0;
 
-    tokenize!(input, token_container,
+    tokenize!(input, token_container, pos_counter,
             KEYWORD_LET_RX | |_| Token::KeywordLet,
             KEYWORD_FN_RX | |_| Token::KeywordFn,
             KEYWORD_STRUCT_RX | |_| Token::KeywordStruct,
@@ -104,6 +118,20 @@ fn tokenize_str(mut input: &str) -> Result<Vec<Token>, String> {
             COMMA_SEPARATOR_RX | |_| Token::CommaSeparator
             );
     Ok(token_container)
+}
+
+fn line_column_from_pos(pos: SourcePosition, input: &str) -> SourcePositionRowColumn{
+    let mut line_count: usize = 0;
+    let mut column_count: usize = 0;
+    for c in input[..pos].chars() {
+        if c == '\n' {
+            line_count += 1;
+            column_count = 0;
+        } else {
+            column_count += 1;
+        }
+    }
+    SourcePositionRowColumn(line_count, column_count)
 }
 
 #[cfg(test)]

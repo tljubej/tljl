@@ -141,53 +141,55 @@ fn keyword_regex_invalid() {
 #[test]
 fn tokenizer_valid() {
     assert_eq!(tokenize_str("let a = fn () {}").expect("Tokenization failed"),
-    vec![Token::KeywordLet,
-         Token::Identifier("a".to_string()),
-         Token::AssignmentOperator,
-         Token::KeywordFn,
-         Token::OpenParenthesis,
-         Token::ClosedParenthesis,
-         Token::OpenCurlyBraces,
-         Token::ClosedCurlyBraces]);
+    vec![(0, Token::KeywordLet),
+         (4, Token::Identifier("a".to_string())),
+         (6, Token::AssignmentOperator),
+         (8, Token::KeywordFn),
+         (11, Token::OpenParenthesis),
+         (12, Token::ClosedParenthesis),
+         (14, Token::OpenCurlyBraces),
+         (15, Token::ClosedCurlyBraces)]);
 
-     assert_eq!(tokenize_str("let a = fn foo(bar, bob) {} \"Literally a string true false struct 3.2\"  true false").expect("Tokenization failed"),
-     vec![Token::KeywordLet,
-          Token::Identifier("a".to_string()),
-          Token::AssignmentOperator,
-          Token::KeywordFn,
-          Token::Identifier("foo".to_string()),
-          Token::OpenParenthesis,
-          Token::Identifier("bar".to_string()),
-          Token::CommaSeparator,
-          Token::Identifier("bob".to_string()),
-          Token::ClosedParenthesis,
-          Token::OpenCurlyBraces,
-          Token::ClosedCurlyBraces,
-          Token::StringLiteral("Literally a string true false struct 3.2".to_string()),
-          Token::BooleanLiteral("true".to_string()),
-          Token::BooleanLiteral("false".to_string())]);
+     assert_eq!(tokenize_str("let a = fn foo(bar, bob) {} \
+         \"Literally a string true false struct 3.2\"  true false").expect("Tokenization failed"),
+     vec![(0, Token::KeywordLet),
+          (4, Token::Identifier("a".to_string())),
+          (6, Token::AssignmentOperator),
+          (8, Token::KeywordFn),
+          (11, Token::Identifier("foo".to_string())),
+          (14, Token::OpenParenthesis),
+          (15, Token::Identifier("bar".to_string())),
+          (18, Token::CommaSeparator),
+          (20, Token::Identifier("bob".to_string())),
+          (23, Token::ClosedParenthesis),
+          (25, Token::OpenCurlyBraces),
+          (26, Token::ClosedCurlyBraces),
+          (28, Token::StringLiteral("Literally a string true false struct 3.2".to_string())),
+          (72, Token::BooleanLiteral("true".to_string())),
+          (77, Token::BooleanLiteral("false".to_string()))]);
 
-     assert_eq!(tokenize_str("   let a = fn \n\n\n \t\t\t\t () { b = 8.3 }  ").expect("Tokenization failed"),
-     vec![Token::KeywordLet,
-          Token::Identifier("a".to_string()),
-          Token::AssignmentOperator,
-          Token::KeywordFn,
-          Token::OpenParenthesis,
-          Token::ClosedParenthesis,
-          Token::OpenCurlyBraces,
-          Token::Identifier("b".to_string()),
-          Token::AssignmentOperator,
-          Token::DoubleLiteral("8.3".to_string()),
-          Token::ClosedCurlyBraces]);
+     assert_eq!(tokenize_str("   let a = fn \n\n\n \t\t\t\t () { b = 8.3 }  ")
+        .expect("Tokenization failed"),
+     vec![(3, Token::KeywordLet),
+          (7, Token::Identifier("a".to_string())),
+          (9, Token::AssignmentOperator),
+          (11, Token::KeywordFn),
+          (23, Token::OpenParenthesis),
+          (24, Token::ClosedParenthesis),
+          (26, Token::OpenCurlyBraces),
+          (28, Token::Identifier("b".to_string())),
+          (30, Token::AssignmentOperator),
+          (32, Token::DoubleLiteral("8.3".to_string())),
+          (36, Token::ClosedCurlyBraces)]);
 
       assert_eq!(tokenize_str("&& || === * - /").expect("Tokenization failed"),
-      vec![Token::BinaryAndOperator,
-           Token::BinaryOrOperator,
-           Token::EqualityOperator,
-           Token::AssignmentOperator,
-           Token::MultiplicationOperator,
-           Token::SubtractionOperator,
-           Token::DivisionOperator]);
+      vec![(0, Token::BinaryAndOperator),
+           (3, Token::BinaryOrOperator),
+           (6, Token::EqualityOperator),
+           (8, Token::AssignmentOperator),
+           (10, Token::MultiplicationOperator),
+           (12, Token::SubtractionOperator),
+           (14, Token::DivisionOperator)]);
 }
 
 #[test]
