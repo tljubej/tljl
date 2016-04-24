@@ -5,7 +5,7 @@ use super::{IDENTIFIER_RX, DOUBLE_LITERAL_RX, STRING_LITERAL_RX, BOOLEAN_LITERAL
             ADDITION_OPERATOR_RX, SUBTRACTION_OPERATOR_RX, MULTIPLICATION_OPERATOR_RX,
             DIVISION_OPERATOR_RX, BINARY_OR_OPERATOR_RX, BINARY_AND_OPERATOR_RX,
             KEYWORD_LET_RX, KEYWORD_FN_RX, KEYWORD_STRUCT_RX, COMMA_SEPARATOR_RX, tokenize_str,
-            Token};
+            KEYWORD_WHILE_RX, KEYWORD_FOR_RX, Token};
 
 #[test]
 fn identifier_regex_valid() {
@@ -125,6 +125,8 @@ fn keyword_regex_valid() {
     assert!(KEYWORD_LET_RX.is_match("let"));
     assert!(KEYWORD_FN_RX.is_match("fn"));
     assert!(KEYWORD_STRUCT_RX.is_match("struct"));
+    assert!(KEYWORD_WHILE_RX.is_match("while"));
+    assert!(KEYWORD_FOR_RX.is_match("for"));
     assert!(COMMA_SEPARATOR_RX.is_match(","));
 }
 
@@ -135,6 +137,8 @@ fn keyword_regex_invalid() {
     assert!(!KEYWORD_LET_RX.is_match("fn"));
     assert!(!KEYWORD_FN_RX.is_match("let"));
     assert!(!KEYWORD_STRUCT_RX.is_match("fn"));
+    assert!(!KEYWORD_WHILE_RX.is_match("whhll"));
+    assert!(!KEYWORD_FOR_RX.is_match("fr"));
     assert!(!COMMA_SEPARATOR_RX.is_match("&&"));
 }
 

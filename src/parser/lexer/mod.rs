@@ -8,6 +8,8 @@ pub enum Token {
     KeywordLet,
     KeywordFn,
     KeywordStruct,
+    Keywordwhile,
+    KeywordFor,
     StringLiteral(String),
     DoubleLiteral(String),
     BooleanLiteral(String),
@@ -99,6 +101,8 @@ pub fn tokenize_str(mut input: &str)
               KEYWORD_LET_RX | |_| Token::KeywordLet,
               KEYWORD_FN_RX | |_| Token::KeywordFn,
               KEYWORD_STRUCT_RX | |_| Token::KeywordStruct,
+              KEYWORD_WHILE_RX | |_| Token::Keywordwhile,
+              KEYWORD_FOR_RX | |_| Token::KeywordFor,
               STRING_LITERAL_RX |
               |input: &str| Token::StringLiteral(input[1..input.len() - 1].to_string()),
               BOOLEAN_LITERAL_RX | |input: &str| Token::BooleanLiteral(input.to_string()),
