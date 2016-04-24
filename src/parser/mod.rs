@@ -4,20 +4,21 @@
 
 pub mod lexer;
 
-use self::lexer::Token as Token;
+use self::lexer::Token;
 
 enum Statement {
     Definition(Definition),
     If(BooleanExpression, Vec<Statement>),
     While(BooleanExpression, Vec<Statement>),
+    For(Object, Vec<Statement>),
     ArithmeticExpression(ArithmeticExpression),
     BooleanExpression(BooleanExpression),
-    Return(Object)
+    Return(Object),
 }
 
 enum Definition {
     Identifier(String),
-    Object(Object)
+    Object(Object),
 }
 
 enum Object {
@@ -26,14 +27,14 @@ enum Object {
     BooleanLiteral(bool),
     StructDefinition(Vec<(String, Object)>),
     FunctionDefinition(Vec<Statement>),
-    Reference(String)
+    Reference(String),
 }
 
 enum BooleanExpression {
     And(Box<BooleanExpression>, Box<BooleanExpression>),
     Or(Box<BooleanExpression>, Box<BooleanExpression>),
     Not(Box<BooleanExpression>),
-    Literal(Object)
+    Literal(Object),
 }
 
 enum ArithmeticExpression {
@@ -41,7 +42,7 @@ enum ArithmeticExpression {
     Subtraction(Box<ArithmeticExpression>, Box<ArithmeticExpression>),
     Multiplication(Box<ArithmeticExpression>, Box<ArithmeticExpression>),
     Division(Box<ArithmeticExpression>, Box<ArithmeticExpression>),
-    DoubleLiteral(Object)
+    DoubleLiteral(Object),
 }
 
 fn parse_tokens(tokens: &[Token]) -> Vec<Statement> {
